@@ -1,17 +1,21 @@
   var Trex, TrexCorrendo;
   var chao, chaoimagem;
   var chaoinv;
+  var nuvem;
+  var nuvemimg;
 
 
   function preload(){
     TrexCorrendo = loadAnimation("trex1.png","trex3.png","trex4.png");
     chaoimagem = loadImage ("ground2.png");
+
+    nuvemimg = loadImage("cloud.png");
 }
 
 
   function setup(){
 
-createCanvas(600,200)
+createCanvas(600,200);
 
    Trex = createSprite(50,160,20,50);
    Trex.addAnimation("correndo",TrexCorrendo);
@@ -56,5 +60,14 @@ drawSprites();
 }
 
 function nuvens(){
-  
+  if (frameCount%60 === 0){
+    nuvem = createSprite(600,100,40,10);
+    nuvem.addImage (nuvemimg);
+    nuvem.scale = 0.7;
+    nuvem.y = Math.round(random(10,100));
+    nuvem.velocityX = -3;
+    nuvem.depth = Trex.depth;
+    Trex.depth = Trex.depth + 1;
+    nuvem.lifetime = 250;
+  }
 }
