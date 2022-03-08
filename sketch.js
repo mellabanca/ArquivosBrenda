@@ -3,6 +3,18 @@
   var chaoinv;
   var nuvem;
   var nuvemimg;
+  var obs1;
+  var obs2;
+  var obs3;
+  var obs4;
+  var obs5;
+  var obs6;
+  var pontos;
+  var grupoNuvens;
+  var grupoObs;
+  var JOGANDO = 1;
+  var GAMEOVER = 0;
+  var estado = JOGANDO;
 
 
   function preload(){
@@ -10,6 +22,13 @@
     chaoimagem = loadImage ("ground2.png");
 
     nuvemimg = loadImage("cloud.png");
+
+    obs1 = loadImage("obstacle1.png");
+    obs2 = loadImage("obstacle2.png");
+   obs3 = loadImage("obstacle3.png");
+   obs4 = loadImage("obstacle4.png");
+   obs5 = loadImage("obstacle5.png");
+   obs6 = loadImage("obstacle6.png");
 }
 
 
@@ -32,16 +51,27 @@ borda = createEdgeSprites();
 
     //var numero = Math.round(random(1,100));
     //console.log(numero);
+    pontos = 0;
+
+    grupoNuvens = new Group();
+    grupoObs = new Group();
 }
 
 
   function draw(){
+    background("white");
 
- background("white");
+    //console.log (Trex.y);
 
- //console.log (Trex.y);
 
-  chao.velocityX = -2;
+    if(estado === JOGANDO){
+      chao.velocityX = -2;
+    } else if (estado === GAMEOVER){
+      chao.velocityX = 0;
+
+    }
+
+
 
   if(keyDown("space") && Trex.y >= 150){
     Trex.velocityY = -10;
@@ -55,8 +85,10 @@ borda = createEdgeSprites();
   Trex.collide(chaoinv);
 
 nuvens();
-
+obstaculos();
 drawSprites();
+text(pontos,500,50);
+pontos = pontos+Math.round(frameCount/60);
 }
 
 function nuvens(){
@@ -69,5 +101,38 @@ function nuvens(){
     nuvem.depth = Trex.depth;
     Trex.depth = Trex.depth + 1;
     nuvem.lifetime = 250;
+    grupoNuvens.add(nuvem);
   }
+}
+
+function obstaculos (){
+  if (frameCount%60 === 0){
+   var obstaculo = createSprite (600,165,10,40);
+   obstaculo.velocityX = -6;
+   var numero = Math.round(random(1,6));
+   switch (numero) {
+      case 1: obstaculo.addImage(obs1);
+       break;
+       case 2: obstaculo.addImage(obs2);
+       break;
+       case 3: obstaculo.addImage(obs3);
+       break;
+       case 4: obstaculo.addImage(obs4);
+       break;
+       case 5: obstaculo.addImage(obs5);
+       break;
+       case 6: obstaculo.addImage(obs6);
+       break;
+   
+     default:
+       break;
+   } 
+
+   obstaculo.scale = 0.5;
+
+   obstaculo.lifetime = 300;
+   grupoObs.add(obstaculo);
+
+  }
+
 }
