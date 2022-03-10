@@ -55,6 +55,9 @@ borda = createEdgeSprites();
 
     grupoNuvens = new Group();
     grupoObs = new Group();
+
+    Trex.debug = false;
+    Trex.setCollider("circle", 0, 0, 35);
 }
 
 
@@ -66,29 +69,42 @@ borda = createEdgeSprites();
 
     if(estado === JOGANDO){
       chao.velocityX = -2;
-    } else if (estado === GAMEOVER){
+      
+      if(keyDown("space") && Trex.y >= 150){
+        Trex.velocityY = -10;
+    }
+  nuvens();
+  obstaculos();
+
+  pontos = pontos+Math.round(frameCount/60);
+
+  Trex.velocityY = Trex.velocityY + 1;
+
+  if(grupoObs.isTouching(Trex)){
+    estado = GAMEOVER;
+  }
+    } 
+    
+    else if (estado === GAMEOVER){
       chao.velocityX = 0;
+      grupoNuvens.setVelocityXEach(0);
+      grupoObs.setVelocityXEach(0);
 
     }
 
 
 
-  if(keyDown("space") && Trex.y >= 150){
-    Trex.velocityY = -10;
-}
+ 
 
-  if (chao.x < 0){
-    chao.x = chao.width/2;
-}
+  
 
-  Trex.velocityY = Trex.velocityY + 1;
+  
   Trex.collide(chaoinv);
 
-nuvens();
-obstaculos();
+
 drawSprites();
 text(pontos,500,50);
-pontos = pontos+Math.round(frameCount/60);
+
 }
 
 function nuvens(){
