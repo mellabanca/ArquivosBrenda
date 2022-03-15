@@ -1,4 +1,4 @@
-  var Trex, TrexCorrendo;
+  var Trex, TrexCorrendo, TrexMorto;
   var chao, chaoimagem;
   var chaoinv;
   var nuvem;
@@ -15,10 +15,15 @@
   var JOGANDO = 1;
   var GAMEOVER = 0;
   var estado = JOGANDO;
+  var gameover;
+  var gameoverImg;
+  var reset;
+  var resetBotao;
 
 
   function preload(){
     TrexCorrendo = loadAnimation("trex1.png","trex3.png","trex4.png");
+    TrexMorto = loadAnimation("trex_collided.png");
     chaoimagem = loadImage ("ground2.png");
 
     nuvemimg = loadImage("cloud.png");
@@ -29,6 +34,9 @@
    obs4 = loadImage("obstacle4.png");
    obs5 = loadImage("obstacle5.png");
    obs6 = loadImage("obstacle6.png");
+
+   gameoverImg = loadImage("gameOver.png");
+   resetBotao = loadImage("restart.png");
 }
 
 
@@ -39,6 +47,8 @@ createCanvas(600,200);
    Trex = createSprite(50,160,20,50);
    Trex.addAnimation("correndo",TrexCorrendo);
    Trex.scale = 0.5;
+
+   Trex.addAnimation("morto",TrexMorto);
 
 borda = createEdgeSprites();
 
@@ -58,6 +68,14 @@ borda = createEdgeSprites();
 
     Trex.debug = false;
     Trex.setCollider("circle", 0, 0, 35);
+
+    gameover = createSprite(300,100);
+    gameover.addImage(gameoverImg);
+    gameover.scale = 0.8;
+
+    reset = createSprite(300,140);
+    reset.addImage(resetBotao);
+    reset.scale = 0.4;
 }
 
 
@@ -67,7 +85,7 @@ borda = createEdgeSprites();
     //console.log (Trex.y);
 
 
-    if(estado === JOGANDO){
+        if(estado === JOGANDO){
       chao.velocityX = -2;
       
       if(keyDown("space") && Trex.y >= 150){
@@ -80,15 +98,29 @@ borda = createEdgeSprites();
 
   Trex.velocityY = Trex.velocityY + 1;
 
+  gameover.visible = false;
+  reset.visible = false;
+
   if(grupoObs.isTouching(Trex)){
     estado = GAMEOVER;
   }
     } 
     
-    else if (estado === GAMEOVER){
+        else if (estado === GAMEOVER){
       chao.velocityX = 0;
+      
       grupoNuvens.setVelocityXEach(0);
+      grupoNuvens.setLifetimeEach(-1);
+      
       grupoObs.setVelocityXEach(0);
+      grupoObs.setLifetimeEach(-1);
+
+      Trex.changeAnimation("morto");
+
+      Trex.velocityY = 0;
+
+      gameover.visible = true;
+      reset.visible = true;
 
     }
 
