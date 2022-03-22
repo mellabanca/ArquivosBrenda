@@ -33,10 +33,10 @@
 
     obs1 = loadImage("obstacle1.png");
     obs2 = loadImage("obstacle2.png");
-   obs3 = loadImage("obstacle3.png");
-   obs4 = loadImage("obstacle4.png");
-   obs5 = loadImage("obstacle5.png");
-   obs6 = loadImage("obstacle6.png");
+    obs3 = loadImage("obstacle3.png");
+    obs4 = loadImage("obstacle4.png");
+    obs5 = loadImage("obstacle5.png");
+    obs6 = loadImage("obstacle6.png");
 
    gameoverImg = loadImage("gameOver.png");
    resetBotao = loadImage("restart.png");
@@ -49,9 +49,9 @@
 
   function setup(){
 
-createCanvas(600,200);
+createCanvas(windowWidth,windowHeight);
 
-   Trex = createSprite(50,160,20,50);
+   Trex = createSprite(50,height-70,20,50);
    Trex.addAnimation("correndo",TrexCorrendo);
    Trex.scale = 0.5;
 
@@ -59,11 +59,11 @@ createCanvas(600,200);
 
 borda = createEdgeSprites();
 
-    chao = createSprite(200,180,400,20);
+    chao = createSprite(width/2,height-80,width,125);
     chao.addImage("chao",chaoimagem);
     chao.x = chao.width/2;
 
-    chaoinv = createSprite(100,190,400,10);
+    chaoinv = createSprite(width/2,height-10,width,125);
     chaoinv.visible = false;
 
     //var numero = Math.round(random(1,100));
@@ -76,11 +76,11 @@ borda = createEdgeSprites();
     Trex.debug = false;
     Trex.setCollider("circle", 0, 0, 35);
 
-    gameover = createSprite(300,100);
+    gameover = createSprite(width/2,height/2-50);
     gameover.addImage(gameoverImg);
     gameover.scale = 0.8;
 
-    reset = createSprite(300,140);
+    reset = createSprite(width/2,height/2);
     reset.addImage(resetBotao);
     reset.scale = 0.4;
 }
@@ -99,21 +99,22 @@ borda = createEdgeSprites();
         chao.x = chao.width/2;
       }
       
-      if(keyDown("space") && Trex.y >= 150){
+      if(keyDown("space") && Trex.y >= height-150 || touches.length > 0 && Trex.y >= height-150){
         Trex.velocityY = -15;
         pulo.play();
+        touches = [];
     }
   nuvens();
   obstaculos();
 
-  pontos = pontos+Math.round(frameCount/60);
+  pontos = pontos+Math.round(frameRate()/60);
 
   Trex.velocityY = Trex.velocityY + 1;
 
   gameover.visible = false;
   reset.visible = false;
 
-  if (pontos % 200 === 0 && pontos > 0){
+  if (pontos % 500 === 0 && pontos > 0){
     pontuacao.play();
   }
 
@@ -139,35 +140,36 @@ borda = createEdgeSprites();
       gameover.visible = true;
       reset.visible = true;
 
+      if(mousePressedOver(reset) || touches.length > 0){
+        reiniciar();
+        touches = [];
+      }
+
     }
-
-
-
- 
-
-  if(mousePressedOver(reset)){
-    reiniciar();
-  }
 
   
   Trex.collide(chaoinv);
 
 
 drawSprites();
-text(pontos,500,50);
+text(pontos,width-100,height/2-150);
 
 }
 
 function reiniciar(){
-  
+  estado = JOGANDO;
+  grupoNuvens.destroyEach();
+  grupoObs.destroyEach();
+  Trex.changeAnimation("correndo");
+  pontos = 0;
 }
 
 function nuvens(){
   if (frameCount%60 === 0){
-    nuvem = createSprite(600,100,40,10);
+    nuvem = createSprite(width+20,height-300,40,10);
     nuvem.addImage (nuvemimg);
     nuvem.scale = 0.7;
-    nuvem.y = Math.round(random(10,100));
+    nuvem.y = Math.round(random(10,height/2));
     nuvem.velocityX = -3;
     nuvem.depth = Trex.depth;
     Trex.depth = Trex.depth + 1;
@@ -178,7 +180,7 @@ function nuvens(){
 
 function obstaculos (){
   if (frameCount%60 === 0){
-   var obstaculo = createSprite (600,165,10,40);
+   var obstaculo = createSprite (width,height-95,10,40);
    obstaculo.velocityX = -(6+pontos/500);
    var numero = Math.round(random(1,6));
    switch (numero) {
